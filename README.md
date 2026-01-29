@@ -22,4 +22,4 @@
 - `GET /api/bookings/check-service-b/` - Проверка доступности Сервиса B
 
 ## 📦 Формат запроса для создания бронирования
-```json
+```json# booking-service
