@@ -11,4 +11,5 @@ urlpatterns = [
     path('health/', views.health_check, name='health_check'),
     path('check-service-b/', views.check_service_b_status, name='check_service_b'),
     path('check/', views.check_availability, name='check_availability'),
+    path('check/', views.check_availability, name='check_availability'),
 ]

@@ -311,3 +311,47 @@ def health_check(request):
         "status": "ok",
         "service": "Booking Service"
     })
+
+@api_view(['POST'])
+def check_availability(request):
+    """Проверка доступности аудитории"""
+    room = request.data.get('room')
+    date = request.data.get('date')
+    time_start = request.data.get('time_start')
+    time_end = request.data.get('time_end')
+    
+    if not all([room, date, time_start, time_end]):
+        return Response({
+            'available': False,
+            'reason': 'Не все поля заполнены'
+        }, status=400)
+    
+    # Проверяем пересечения с существующими бронированиями
+    try:
+        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+        start_obj = datetime.strptime(time_start, "%H:%M").time()
+        end_obj = datetime.strptime(time_end, "%H:%M").time()
+        
+        conflicting = Booking.objects.filter(
+            room=room,
+            date=date_obj,
+            time_start__lt=end_obj,
+            time_end__gt=start_obj
+        ).exists()
+        
+        if conflicting:
+            return Response({
+                'available': False,
+                'reason': 'Аудитория занята в это время'
+            })
+        
+        return Response({
+            'available': True,
+            'room': room
+        })
+        
+    except Exception as e:
+        return Response({
+            'available': False,
+            'reason': f'Ошибка: {str(e)}'
+        }, status=400)
