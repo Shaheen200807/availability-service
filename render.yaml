@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: availability-service
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn booking_service.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
