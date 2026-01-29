@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'booking_service.urls'
@@ -141,3 +141,13 @@ AVAILABILITY_SERVICE_URL = os.environ.get(
     'AVAILABILITY_SERVICE_URL',
     'http://localhost:8001/api/check/'
 )
+# Render settings
+import dj_database_url
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
