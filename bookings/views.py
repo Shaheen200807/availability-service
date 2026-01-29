@@ -159,6 +159,30 @@ def list_bookings(request):
     })
 
 
+@api_view(['POST'])
+def check_availability(request):
+    """Проверка доступности аудитории"""
+    room_number = request.data.get('room_number')
+    date = request.data.get('date')
+    start_time = request.data.get('start_time')
+    end_time = request.data.get('end_time')
+
+    # Проверяем, есть ли пересечения с существующими бронированиями
+    from .models import Booking
+    from datetime import datetime
+
+    conflicting = Booking.objects.filter(
+        room_number=room_number,
+        date=date,
+        start_time__lt=end_time,
+        end_time__gt=start_time
+    ).exists()
+
+    return Response({
+        'available': not conflicting,
+        'room_number': room_number
+    })
+
 @api_view(['GET'])
 def get_booking_detail(request, booking_id):
     """Получить детали конкретного бронирования"""
